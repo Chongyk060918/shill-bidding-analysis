@@ -139,7 +139,7 @@ with tab4:
         )
         st.plotly_chart(fig4, use_container_width=True)
 with tab5:
-    counts = data_frame['Class'].value_counts()
+    counts = df['Class'].value_counts()
 
     labels = ['Non-Shill (0)', 'Shill (1)']
     colors = ['#1f77b4', '#ff7f0e']
