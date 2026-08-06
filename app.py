@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import joblib
 
 # --- PAGE SETUP ---
 st.set_page_config(page_title="Shill Bidding Detector", page_icon="🕵️", layout="wide")
@@ -11,6 +12,16 @@ def load_data():
     return pd.read_csv('Shill Bidding Dataset.csv')
 
 df = load_data()
+
+# 1. Load the model efficiently at the top of your script
+@st.cache_resource
+def load_model():
+    # Replace with your actual saved model file
+    return joblib.load("my_text_classifier.pkl")
+
+pipeline = load_model()
+
+st.title("20 Newsgroups Text Classifier")
 
 # --- SIDEBAR ---
 st.sidebar.title("⚙️ Control Panel")
@@ -31,11 +42,14 @@ st.title("Auction Fraud & Shill Bidding Detector")
 st.markdown("**System Status:** Active Monitoring | **Dataset:** Shill Bidding Dataset.csv")
 st.divider()
 
+
+
 # --- TABS ---
 tab1, tab2, tab3 = st.tabs([
     "🚨 Live Fraud Monitoring", 
     "🕵️ Bidder Behavior Profiling", 
-    "🕸️ Auction Anomalies"
+    "🕸️ Auction Anomalies",
+    "Confidence Scores"
 ])
 
 # TAB 1: Live Monitoring
@@ -76,3 +90,30 @@ with tab3:
     with colB:
         fig3 = px.scatter(filtered_df, x="Early_Bidding", y="Last_Bidding", color="Class", title="Bidding Timeline Anomalies")
         st.plotly_chart(fig3, use_container_width=True)
+        
+with tab4:
+    st.header("Confidence Scores")
+    st.write("Analyze the statistical likelihood of the top 5 categories.")
+    
+    # Note: We add a unique 'key' to prevent Streamlit widget duplication errors 
+    # if you also have a text_area in Tab 1!
+    user_input = st.text_area("Enter text to evaluate:", key="confidence_input")
+
+    if user_input:
+        # Extract classes and probabilities
+        classes = pipeline.classes_
+        probabilities = pipeline.predict_proba([user_input])[0]
+        
+        # Create a sorted Pandas DataFrame
+        prob_df = pd.DataFrame({
+            "Category": classes,
+            "Probability": probabilities
+        })
+        
+        # Isolate the top 5 most likely categories
+        top_5_df = prob_df.sort_values(by="Probability", ascending=False).head(5)
+        
+        # Display the results
+        st.subheader("Top 5 Predictions")
+        st.bar_chart(data=top_5_df, x="Category", y="Probability")
+
