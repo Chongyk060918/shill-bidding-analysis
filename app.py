@@ -52,7 +52,7 @@ st.markdown("**System Status:** Active Monitoring | **Dataset:** Shill Bidding D
 st.divider()
 
 # --- TABS ---
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "🚨 Live Fraud Monitoring", 
     "🕵️ Bidder Behavior Profiling", 
     "🕸️ Auction Anomalies",
