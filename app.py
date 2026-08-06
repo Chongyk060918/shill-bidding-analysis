@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from sklearn.ensemble import RandomForestClassifier # Imported to train the model on the fly
+import matplotlib.pyplot as plt
 
 # --- PAGE SETUP ---
 st.set_page_config(page_title="Shill Bidding Detector", page_icon="🕵️", layout="wide")
@@ -51,11 +52,12 @@ st.markdown("**System Status:** Active Monitoring | **Dataset:** Shill Bidding D
 st.divider()
 
 # --- TABS ---
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "🚨 Live Fraud Monitoring", 
     "🕵️ Bidder Behavior Profiling", 
     "🕸️ Auction Anomalies",
-    "📊 Confidence Scores"
+    "📊 Confidence Scores",
+    "new"
 ])
 
 # TAB 1: Live Monitoring
@@ -136,3 +138,21 @@ with tab4:
             color_discrete_map={"Normal Bid (Class 0)": "green", "Fraudulent Bid (Class 1)": "red"}
         )
         st.plotly_chart(fig4, use_container_width=True)
+with tab5:
+    counts = data_frame['Class'].value_counts()
+
+    labels = ['Non-Shill (0)', 'Shill (1)']
+    colors = ['#1f77b4', '#ff7f0e']
+    
+    plt.figure(figsize=(7, 7))
+    
+    # 3. Create the pie chart
+    plt.pie(
+        counts.values,
+        labels=labels,
+        colors=colors,
+        autopct='%1.1f%%',          # Display percentages with one decimal place
+    )
+    
+    plt.title('Distribution of Classes (Shill vs Non-Shill)')
+    plt.show()
