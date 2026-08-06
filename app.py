@@ -45,13 +45,13 @@ st.divider()
 
 
 # --- TABS ---
+
 tab1, tab2, tab3, tab4 = st.tabs([
     "🚨 Live Fraud Monitoring", 
     "🕵️ Bidder Behavior Profiling", 
     "🕸️ Auction Anomalies",
     "Confidence Scores"
 ])
-
 # TAB 1: Live Monitoring
 with tab1:
     st.subheader("High-Risk Alerts & Overview")
