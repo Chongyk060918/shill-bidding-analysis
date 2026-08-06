@@ -45,7 +45,7 @@ st.divider()
 
 
 # --- TABS ---
-tab1, tab2, tab3 = st.tabs([
+tab1, tab2, tab3, tab4 = st.tabs([
     "🚨 Live Fraud Monitoring", 
     "🕵️ Bidder Behavior Profiling", 
     "🕸️ Auction Anomalies",
