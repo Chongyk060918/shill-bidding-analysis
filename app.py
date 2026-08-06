@@ -155,4 +155,4 @@ with tab5:
     )
     
     plt.title('Distribution of Classes (Shill vs Non-Shill)')
-    plt.show()
+    st.pyplot()
