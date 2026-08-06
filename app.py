@@ -57,7 +57,8 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "🕵️ Bidder Behavior Profiling", 
     "🕸️ Auction Anomalies",
     "📊 Confidence Scores",
-    "new"
+    "new",
+    "table"
 ])
 
 # TAB 1: Live Monitoring
@@ -156,3 +157,8 @@ with tab5:
     
     plt.title('Distribution of Classes (Shill vs Non-Shill)')
     st.pyplot()
+with tab6:
+    import pandas as pd
+
+    data_frame = pd.read_csv('Shill Bidding Dataset.csv')
+    print(data_frame.head())
