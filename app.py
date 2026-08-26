@@ -12,17 +12,13 @@ __main__.BoxplotWinsorizer = BoxplotWinsorizer
 # --- 1. PAGE SETUP ---
 st.set_page_config(page_title="Auction Shield | Fraud Detection", page_icon="🛡️", layout="wide")
 
-# --- 2. LOAD MODELS (Cached for speed) ---
-@st.cache_resource
-def load_models():
-    models = {
-        "Logistic Regression (Baseline)": joblib.load('logistic_regression_model.pkl'),
-        "Random Forest Classifier": joblib.load('random_forest_model.pkl'),
-        "Hist Gradient Boosting": joblib.load('hist_gradient_boosting_model.pkl')
-    }
-    return models
-
-models = load_models()
+# --- 2. MODEL PATHS (LAZY LOADING) ---
+# We ONLY store the file paths here. We do not load them into memory yet!
+MODEL_PATHS = {
+    "Logistic Regression (Baseline)": 'logistic_regression_model.pkl',
+    "Random Forest Classifier": 'random_forest_model.pkl',
+    "Hist Gradient Boosting": 'hist_gradient_boosting_model.pkl'
+}
 
 # --- 3. HEADER ---
 st.title("🛡️ Auction Shield: Shill Bidding Detection")
@@ -40,12 +36,11 @@ with tab1:
     st.markdown("Adjust the behavioral metrics below to test the machine learning models in real-time.")
     
     # Model Selector
-    selected_model_name = st.selectbox("Select Fraud Detection Algorithm:", list(models.keys()))
-    active_model = models[selected_model_name]
+    selected_model_name = st.selectbox("Select Fraud Detection Algorithm:", list(MODEL_PATHS.keys()))
     
     st.divider()
     
-    # Input Sliders (Organized in columns for a clean UI)
+    # Input Sliders
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -65,32 +60,31 @@ with tab1:
 
     # Predict Button
     if st.button("Analyze Bidder Risk", type="primary", use_container_width=True):
-        # Package inputs into a DataFrame matching EXACT training data order
-        input_data = pd.DataFrame([[
-            bidder_tendency, 
-            bidding_ratio, 
-            successive_outbidding,
-            last_bidding, 
-            auction_bids, 
-            starting_price_average, 
-            early_bidding, 
-            winning_ratio, 
-            auction_duration
-        ]], columns=[
-            "Bidder_Tendency", 
-            "Bidding_Ratio", 
-            "Successive_Outbidding",
-            "Last_Bidding", 
-            "Auction_Bids", 
-            "Starting_Price_Average", 
-            "Early_Bidding", 
-            "Winning_Ratio", 
-            "Auction_Duration"
-        ])
         
-        # Make Prediction
-        prediction = active_model.predict(input_data)[0]
-        probability = active_model.predict_proba(input_data)[0][1]
+        # LAZY LOAD THE MODEL HERE: It only loads the one you picked, saving RAM!
+        with st.spinner(f"Loading {selected_model_name} and analyzing..."):
+            active_model = joblib.load(MODEL_PATHS[selected_model_name])
+            
+            # Package inputs into a DataFrame matching EXACT training data order
+            input_data = pd.DataFrame([[
+                bidder_tendency, 
+                bidding_ratio, 
+                successive_outbidding,
+                last_bidding, 
+                auction_bids, 
+                starting_price_average, 
+                early_bidding, 
+                winning_ratio, 
+                auction_duration
+            ]], columns=[
+                "Bidder_Tendency", "Bidding_Ratio", "Successive_Outbidding",
+                "Last_Bidding", "Auction_Bids", "Starting_Price_Average", 
+                "Early_Bidding", "Winning_Ratio", "Auction_Duration"
+            ])
+            
+            # Make Prediction
+            prediction = active_model.predict(input_data)[0]
+            probability = active_model.predict_proba(input_data)[0][1]
         
         # Display Results
         st.divider()
