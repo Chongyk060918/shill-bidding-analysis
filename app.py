@@ -1,8 +1,13 @@
 import streamlit as st
 import pandas as pd
 import joblib
-# Importing your custom transformer exactly as named in your folder!
+
+# 1. Import your custom transformer
 from custom_transforms import BoxplotWinsorizer
+
+# 2. THE FIX: Tell Python's unpickler where to find the class
+import __main__
+__main__.BoxplotWinsorizer = BoxplotWinsorizer
 
 # --- 1. PAGE SETUP ---
 st.set_page_config(page_title="Auction Shield | Fraud Detection", page_icon="🛡️", layout="wide")
@@ -18,6 +23,8 @@ def load_models():
     return models
 
 models = load_models()
+
+# ... (The rest of your code remains exactly the same below this!)
 
 # --- 3. HEADER ---
 st.title("🛡️ Auction Shield: Shill Bidding Detection")
