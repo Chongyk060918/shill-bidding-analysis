@@ -2,10 +2,10 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# 1. Import your custom transformer
+# 1. Import your custom transformer exactly as named in your folder!
 from custom_transforms import BoxplotWinsorizer
 
-# 2. THE FIX: Tell Python's unpickler where to find the class
+# 2. THE CLOUD FIX: Tell Python's unpickler where to find the class in memory
 import __main__
 __main__.BoxplotWinsorizer = BoxplotWinsorizer
 
@@ -23,8 +23,6 @@ def load_models():
     return models
 
 models = load_models()
-
-# ... (The rest of your code remains exactly the same below this!)
 
 # --- 3. HEADER ---
 st.title("🛡️ Auction Shield: Shill Bidding Detection")
@@ -67,13 +65,27 @@ with tab1:
 
     # Predict Button
     if st.button("Analyze Bidder Risk", type="primary", use_container_width=True):
-        # Package inputs into a DataFrame matching training data
+        # Package inputs into a DataFrame matching EXACT training data order
         input_data = pd.DataFrame([[
-            bidder_tendency, bidding_ratio, winning_ratio, successive_outbidding,
-            last_bidding, auction_bids, starting_price_average, early_bidding, auction_duration
+            bidder_tendency, 
+            bidding_ratio, 
+            successive_outbidding,
+            last_bidding, 
+            auction_bids, 
+            starting_price_average, 
+            early_bidding, 
+            winning_ratio, 
+            auction_duration
         ]], columns=[
-            "Bidder_Tendency", "Bidding_Ratio", "Winning_Ratio", "Successive_Outbidding",
-            "Last_Bidding", "Auction_Bids", "Starting_Price_Average", "Early_Bidding", "Auction_Duration"
+            "Bidder_Tendency", 
+            "Bidding_Ratio", 
+            "Successive_Outbidding",
+            "Last_Bidding", 
+            "Auction_Bids", 
+            "Starting_Price_Average", 
+            "Early_Bidding", 
+            "Winning_Ratio", 
+            "Auction_Duration"
         ])
         
         # Make Prediction
